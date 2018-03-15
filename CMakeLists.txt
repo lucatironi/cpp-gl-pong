@@ -24,8 +24,8 @@ include_directories(src/
 file(GLOB VENDORS_SOURCES vendor/glad/src/glad.c)
 file(GLOB PROJECT_HEADERS src/*.hpp)
 file(GLOB PROJECT_SOURCES src/*.cpp)
-file(GLOB PROJECT_SHADERS src/*.vs
-                          src/*.fs)
+file(GLOB PROJECT_SHADERS src/shaders/*.vs
+                          src/shaders/*.fs)
 file(GLOB PROJECT_CONFIGS CMakeLists.txt
                           Readme.md
                          .gitignore
