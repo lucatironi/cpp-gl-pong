@@ -54,6 +54,32 @@ void Game::Update(GLfloat deltaTime)
 
 void Game::ProcessInput(GLfloat deltaTime)
 {
+    if (this->State == GAME_ACTIVE)
+    {
+        GLfloat deltaSpace = PADDLE_VELOCITY * deltaTime;
+        // Move paddle one
+        if (this->Keys[GLFW_KEY_W])
+        {
+            if (Paddle1->Position.y >= 0)
+                Paddle1->Position.y -= deltaSpace;
+        }
+        if (this->Keys[GLFW_KEY_S])
+        {
+            if (Paddle1->Position.y <= this->Height - Paddle1->Size.y)
+                Paddle1->Position.y += deltaSpace;
+        }
+        // Move paddle two
+        if (this->Keys[GLFW_KEY_UP])
+        {
+            if (Paddle2->Position.y >= 0)
+                Paddle2->Position.y -= deltaSpace;
+        }
+        if (this->Keys[GLFW_KEY_DOWN])
+        {
+            if (Paddle2->Position.y <= this->Height - Paddle2->Size.y)
+                Paddle2->Position.y += deltaSpace;
+        }
+    }
 }
 
 void Game::Render()
