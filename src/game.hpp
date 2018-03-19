@@ -1,5 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
+#include <tuple>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -12,9 +13,19 @@ enum GameState
     GAME_WIN
 };
 
+enum Direction
+{
+    UP,
+    RIGHT,
+    DOWN,
+    LEFT
+};
+
+typedef std::tuple<GLboolean, Direction, glm::vec2> Collision;
+
 const glm::vec2 PADDLE_SIZE(20, 100);
 const GLfloat PADDLE_VELOCITY(500.0f);
-const glm::vec2 INITIAL_BALL_VELOCITY(100.0f, -350.0f);
+const glm::vec2 INITIAL_BALL_VELOCITY(450.0f, 300.0f);
 const GLfloat BALL_RADIUS = 10.0f;
 
 class Game
@@ -31,6 +42,7 @@ class Game
     void ProcessInput(GLfloat deltaTime);
     void Update(GLfloat deltaTime);
     void Render();
+    void DoCollisions();
 
     void Reset();
 };
