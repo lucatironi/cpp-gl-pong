@@ -7,6 +7,7 @@
 #include "resource_manager.hpp"
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
+void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
 const unsigned int WINDOW_WIDTH = 800;
 const unsigned int WINDOW_HEIGHT = 600;
@@ -40,8 +41,6 @@ int main()
         return -1;
     }
 
-    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-    glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -88,4 +87,11 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         else if (action == GLFW_RELEASE)
             Pong.Keys[key] = GL_FALSE;
     }
+}
+
+void framebuffer_size_callback(GLFWwindow *window, int width, int height)
+{
+    int framebufferWidth, framebufferHeight;
+    glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
+    glViewport(0, 0, framebufferWidth, framebufferHeight);
 }
