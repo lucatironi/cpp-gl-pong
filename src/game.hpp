@@ -22,8 +22,8 @@ class Game
     ~Game();
     
     void Init();
-    void ProcessInput(GLfloat dt);
-    void Update(GLfloat dt);
+    void ProcessInput(GLfloat deltaTime);
+    void Update(GLfloat deltaTime);
     void Render();
 };
 

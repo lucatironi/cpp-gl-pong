@@ -28,11 +28,11 @@ void Game::Init()
     Renderer = new SpriteRenderer(myShader);
 }
 
-void Game::Update(GLfloat dt)
+void Game::Update(GLfloat deltaTime)
 {
 }
 
-void Game::ProcessInput(GLfloat dt)
+void Game::ProcessInput(GLfloat deltaTime)
 {
 }
 
