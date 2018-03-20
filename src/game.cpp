@@ -3,8 +3,10 @@
 #include "sprite_renderer.hpp"
 #include "game_object.hpp"
 #include "ball_object.hpp"
+#include "particle_generator.hpp"
 
 SpriteRenderer *Renderer;
+ParticleGenerator *Particles;
 GameObject *Paddle1, *Paddle2;
 BallObject *Ball;
 
@@ -16,17 +18,21 @@ Game::Game(GLuint width, GLuint height)
 Game::~Game()
 {
     delete Renderer;
+    delete Particles;
 }
 
 void Game::Init()
 {
     // Load shaders
     ResourceManager::LoadShader("../src/shaders/sprite.vs", "../src/shaders/sprite.fs", nullptr, "sprite");
+    ResourceManager::LoadShader("../src/shaders/particle.vs", "../src/shaders/particle.fs", nullptr, "particle");
     // Configure shaders
     glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(this->Width), static_cast<GLfloat>(this->Height), 0.0f, -1.0f, 1.0f);
     ResourceManager::GetShader("sprite").Use().SetMatrix4("projection", projection);
+    ResourceManager::GetShader("particle").Use().SetMatrix4("projection", projection);
     // Set render-specific controls
     Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
+    Particles = new ParticleGenerator(ResourceManager::GetShader("particle"), 500);
 
     // Configure game objects
     glm::vec2 paddle1Position = glm::vec2(
@@ -51,6 +57,8 @@ void Game::Update(GLfloat deltaTime)
         Ball->Move(deltaTime, this->Height);
         // Check for collisions
         this->DoCollisions();
+        // Update particles
+        Particles->Update(deltaTime, *Ball, 2, glm::vec2(Ball->Radius / 2));
         // Check loss condition
         if (Ball->Position.x <= 0.0f)
         {
@@ -98,6 +106,7 @@ void Game::Render()
         Paddle1->Draw(*Renderer);
         Paddle2->Draw(*Renderer);
         Ball->Draw(*Renderer);
+            Particles->Draw();
     }
 }
 
