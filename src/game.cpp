@@ -4,11 +4,14 @@
 #include "game_object.hpp"
 #include "ball_object.hpp"
 #include "particle_generator.hpp"
+#include "post_processor.hpp"
 
 SpriteRenderer *Renderer;
 ParticleGenerator *Particles;
+PostProcessor *Effects;
 GameObject *Paddle1, *Paddle2;
 BallObject *Ball;
+GLfloat ShakeTime = 0.0f;
 
 Game::Game(GLuint width, GLuint height)
     : State(GAME_ACTIVE), Keys(), Width(width), Height(height)
@@ -26,6 +29,7 @@ void Game::Init()
     // Load shaders
     ResourceManager::LoadShader("../src/shaders/sprite.vs", "../src/shaders/sprite.fs", nullptr, "sprite");
     ResourceManager::LoadShader("../src/shaders/particle.vs", "../src/shaders/particle.fs", nullptr, "particle");
+    ResourceManager::LoadShader("../src/shaders/post_processing.vs", "../src/shaders/post_processing.fs", nullptr, "postprocessing");
     // Configure shaders
     glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(this->Width), static_cast<GLfloat>(this->Height), 0.0f, -1.0f, 1.0f);
     ResourceManager::GetShader("sprite").Use().SetMatrix4("projection", projection);
@@ -33,6 +37,7 @@ void Game::Init()
     // Set render-specific controls
     Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
     Particles = new ParticleGenerator(ResourceManager::GetShader("particle"), 500);
+    Effects = new PostProcessor(ResourceManager::GetShader("postprocessing"), this->Width, this->Height);
 
     // Configure game objects
     glm::vec2 paddle1Position = glm::vec2(
@@ -59,6 +64,13 @@ void Game::Update(GLfloat deltaTime)
         this->DoCollisions();
         // Update particles
         Particles->Update(deltaTime, *Ball, 2, glm::vec2(Ball->Radius / 2));
+        // Reduce shake time
+        if (ShakeTime > 0.0f)
+        {
+            ShakeTime -= deltaTime;
+            if (ShakeTime <= 0.0f)
+                Effects->Shake = false;
+        }
         // Check loss condition
         if (Ball->Position.x <= 0.0f)
         {
@@ -103,10 +115,13 @@ void Game::Render()
 {
     if (this->State == GAME_ACTIVE)
     {
-        Paddle1->Draw(*Renderer);
-        Paddle2->Draw(*Renderer);
-        Ball->Draw(*Renderer);
+        Effects->BeginRender();
+            Paddle1->Draw(*Renderer);
+            Paddle2->Draw(*Renderer);
             Particles->Draw();
+            Ball->Draw(*Renderer);
+        Effects->EndRender();
+        Effects->Render(glfwGetTime());
     }
 }
 
@@ -119,6 +134,9 @@ void Game::DoCollisions()
     glm::vec2 oldVelocity = Ball->Velocity;
     if (CheckCollision(*Ball, *Paddle1))
     {
+        ShakeTime = 0.05f;
+        Effects->Shake = true;
+
         GLfloat centerBoard = Paddle1->Position.y + Paddle1->Size.y / 2;
         GLfloat distance = (Ball->Position.y + Ball->Radius) - centerBoard;
         GLfloat percentage = distance / (Paddle1->Size.y / 2);
@@ -130,6 +148,9 @@ void Game::DoCollisions()
     }
     if (CheckCollision(*Ball, *Paddle2))
     {
+        ShakeTime = 0.05f;
+        Effects->Shake = true;
+
         GLfloat centerBoard = Paddle2->Position.y + Paddle2->Size.y / 2;
         GLfloat distance = (Ball->Position.y + Ball->Radius) - centerBoard;
         GLfloat percentage = distance / (Paddle2->Size.y / 2);
