@@ -13,16 +13,6 @@ enum GameState
     GAME_WIN
 };
 
-enum Direction
-{
-    UP,
-    RIGHT,
-    DOWN,
-    LEFT
-};
-
-typedef std::tuple<GLboolean, Direction, glm::vec2> Collision;
-
 const glm::vec2 PADDLE_SIZE(20, 100);
 const GLfloat PADDLE_VELOCITY(500.0f);
 const glm::vec2 INITIAL_BALL_VELOCITY(450.0f, 300.0f);
