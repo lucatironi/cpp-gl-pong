@@ -16,9 +16,6 @@ Game::Game(GLuint width, GLuint height)
 Game::~Game()
 {
     delete Renderer;
-    delete Paddle1;
-    delete Paddle2;
-    delete Ball;
 }
 
 void Game::Init()
@@ -27,13 +24,11 @@ void Game::Init()
     ResourceManager::LoadShader("../src/shaders/sprite.vs", "../src/shaders/sprite.fs", nullptr, "sprite");
     // Configure shaders
     glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(this->Width), static_cast<GLfloat>(this->Height), 0.0f, -1.0f, 1.0f);
-    ResourceManager::GetShader("sprite").Use().SetInteger("image", 0);
-    ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
+    ResourceManager::GetShader("sprite").Use().SetMatrix4("projection", projection);
     // Set render-specific controls
-    Shader myShader;
-    myShader = ResourceManager::GetShader("sprite");
-    Renderer = new SpriteRenderer(myShader);
+    Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
 
+    // Configure game objects
     glm::vec2 paddle1Position = glm::vec2(
         10.0f,
         this->Height / 2 - PADDLE_SIZE.y / 2);

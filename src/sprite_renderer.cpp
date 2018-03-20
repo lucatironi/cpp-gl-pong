@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-SpriteRenderer::SpriteRenderer(Shader &shader)
+SpriteRenderer::SpriteRenderer(Shader shader)
 {
     this->shader = shader;
     this->initRenderData();
