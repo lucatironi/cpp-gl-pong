@@ -53,6 +53,7 @@ PostProcessor::PostProcessor(Shader shader, GLuint width, GLuint height)
         1.0 / 16, 2.0 / 16, 1.0 / 16};
     glUniform1fv(glGetUniformLocation(this->PostProcessingShader.ID, "blur_kernel"), 9, blur_kernel);
 }
+
 PostProcessor::~PostProcessor()
 {
     glDeleteVertexArrays(1, &this->quadVAO);
@@ -64,6 +65,7 @@ void PostProcessor::BeginRender()
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 }
+
 void PostProcessor::EndRender()
 {
     // Now resolve multisampled color-buffer into intermediate FBO to store to texture
