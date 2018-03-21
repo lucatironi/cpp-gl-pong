@@ -23,9 +23,9 @@ class Game
   public:
     GameState State;
     GLboolean Keys[1024];
-    GLuint Width, Height;
+    GLuint WindowWidth, WindowHeight, FramebufferWidth, FramebufferHeight;
     
-    Game(GLuint width, GLuint height);
+    Game(GLuint windowWidth, GLuint windowHeight, GLuint framebufferWidth, GLuint framebufferHeight);
     ~Game();
     
     void Init();

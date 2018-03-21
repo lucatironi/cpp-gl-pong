@@ -13,8 +13,10 @@ GameObject *Paddle1, *Paddle2;
 BallObject *Ball;
 GLfloat ShakeTime = 0.0f;
 
-Game::Game(GLuint width, GLuint height)
-    : State(GAME_ACTIVE), Keys(), Width(width), Height(height)
+Game::Game(GLuint windowWidth, GLuint windowHeight, GLuint framebufferWidth, GLuint framebufferHeight)
+    : State(GAME_ACTIVE), Keys(),
+      WindowWidth(windowWidth), WindowHeight(windowHeight),
+      FramebufferWidth(framebufferWidth), FramebufferHeight(framebufferHeight)
 {
 }
 
@@ -31,26 +33,26 @@ void Game::Init()
     ResourceManager::LoadShader("../src/shaders/particle.vs", "../src/shaders/particle.fs", nullptr, "particle");
     ResourceManager::LoadShader("../src/shaders/post_processing.vs", "../src/shaders/post_processing.fs", nullptr, "postprocessing");
     // Configure shaders
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(this->Width), static_cast<GLfloat>(this->Height), 0.0f, -1.0f, 1.0f);
+    glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(this->WindowWidth), static_cast<GLfloat>(this->WindowHeight), 0.0f, -1.0f, 1.0f);
     ResourceManager::GetShader("sprite").Use().SetMatrix4("projection", projection);
     ResourceManager::GetShader("particle").Use().SetMatrix4("projection", projection);
     // Set render-specific controls
     Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
     Particles = new ParticleGenerator(ResourceManager::GetShader("particle"), 500);
-    Effects = new PostProcessor(ResourceManager::GetShader("postprocessing"), this->Width, this->Height);
+    Effects = new PostProcessor(ResourceManager::GetShader("postprocessing"), this->FramebufferWidth, this->FramebufferHeight);
 
     // Configure game objects
     glm::vec2 paddle1Position = glm::vec2(
         10.0f,
-        this->Height / 2 - PADDLE_SIZE.y / 2);
+        this->WindowHeight / 2 - PADDLE_SIZE.y / 2);
     Paddle1 = new GameObject(paddle1Position, PADDLE_SIZE);
 
     glm::vec2 paddle2Position = glm::vec2(
-        this->Width - PADDLE_SIZE.x - 10.0f,
-        this->Height / 2 - PADDLE_SIZE.y / 2);
+        this->WindowWidth - PADDLE_SIZE.x - 10.0f,
+        this->WindowHeight / 2 - PADDLE_SIZE.y / 2);
     Paddle2 = new GameObject(paddle2Position, PADDLE_SIZE);
 
-    glm::vec2 ballPosition = glm::vec2(this->Width / 2, this->Height / 2);
+    glm::vec2 ballPosition = glm::vec2(this->WindowWidth / 2, this->WindowHeight / 2);
     Ball = new BallObject(ballPosition, BALL_RADIUS, INITIAL_BALL_VELOCITY);
 }
 
@@ -59,7 +61,7 @@ void Game::Update(GLfloat deltaTime)
     if (this->State == GAME_ACTIVE)
     {
         // Update objects
-        Ball->Move(deltaTime, this->Height);
+        Ball->Move(deltaTime, this->WindowHeight);
         // Check for collisions
         this->DoCollisions();
         // Update particles
@@ -74,9 +76,9 @@ void Game::Update(GLfloat deltaTime)
         // Check loss condition
         if (Ball->Position.x <= 0.0f)
         {
-            Ball->Reset(glm::vec2(this->Width / 2, this->Height / 2), INITIAL_BALL_VELOCITY);
-        } else if (Ball->Position.x + Ball->Size.x >= this->Width) {
-            Ball->Reset(glm::vec2(this->Width / 2, this->Height / 2), INITIAL_BALL_VELOCITY);
+            Ball->Reset(glm::vec2(this->WindowWidth / 2, this->WindowHeight / 2), INITIAL_BALL_VELOCITY);
+        } else if (Ball->Position.x + Ball->Size.x >= this->WindowWidth) {
+            Ball->Reset(glm::vec2(this->WindowWidth / 2, this->WindowHeight / 2), INITIAL_BALL_VELOCITY);
         }
     }
 }
@@ -94,7 +96,7 @@ void Game::ProcessInput(GLfloat deltaTime)
         }
         if (this->Keys[GLFW_KEY_S])
         {
-            if (Paddle1->Position.y <= this->Height - Paddle1->Size.y)
+            if (Paddle1->Position.y <= this->WindowHeight - Paddle1->Size.y)
                 Paddle1->Position.y += deltaSpace;
         }
         // Move paddle two
@@ -105,7 +107,7 @@ void Game::ProcessInput(GLfloat deltaTime)
         }
         if (this->Keys[GLFW_KEY_DOWN])
         {
-            if (Paddle2->Position.y <= this->Height - Paddle2->Size.y)
+            if (Paddle2->Position.y <= this->WindowHeight - Paddle2->Size.y)
                 Paddle2->Position.y += deltaSpace;
         }
     }

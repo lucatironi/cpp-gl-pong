@@ -12,7 +12,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 const unsigned int WINDOW_WIDTH = 800;
 const unsigned int WINDOW_HEIGHT = 600;
 
-Game Pong(WINDOW_WIDTH, WINDOW_HEIGHT);
+Game *Pong;
 
 int main()
 {
@@ -44,8 +44,11 @@ int main()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    Pong.Init();
-    Pong.State = GAME_ACTIVE;
+    int framebufferWidth, framebufferHeight;
+    glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
+
+    Pong = new Game(WINDOW_WIDTH, WINDOW_HEIGHT, framebufferWidth, framebufferHeight);
+    Pong->Init();
 
     GLfloat deltaTime = 0.0f;
     GLfloat lastFrame = 0.0f;
@@ -57,14 +60,14 @@ int main()
         lastFrame = currentFrame;
         glfwPollEvents();
 
-        Pong.ProcessInput(deltaTime);
+        Pong->ProcessInput(deltaTime);
 
-        Pong.Update(deltaTime);
+        Pong->Update(deltaTime);
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        Pong.Render();
+        Pong->Render();
 
         glfwSwapBuffers(window);
     }
@@ -83,9 +86,9 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     if (key >= 0 && key < 1024)
     {
         if (action == GLFW_PRESS)
-            Pong.Keys[key] = GL_TRUE;
+            Pong->Keys[key] = GL_TRUE;
         else if (action == GLFW_RELEASE)
-            Pong.Keys[key] = GL_FALSE;
+            Pong->Keys[key] = GL_FALSE;
     }
 }
 
@@ -94,4 +97,6 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
     int framebufferWidth, framebufferHeight;
     glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
     glViewport(0, 0, framebufferWidth, framebufferHeight);
+    Pong->FramebufferWidth = framebufferWidth;
+    Pong->FramebufferHeight = framebufferHeight;
 }
