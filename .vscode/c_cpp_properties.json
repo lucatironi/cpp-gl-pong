@@ -12,6 +12,7 @@
                 "${workspaceRoot}/vendor/glad/include",
                 "${workspaceRoot}/vendor/glfw/include",
                 "${workspaceRoot}/vendor/glm",
+                "${workspaceRoot}/vendor/irrKlang/include",
                 "${workspaceRoot}/vendor/stb"
             ],
             "defines": [],
