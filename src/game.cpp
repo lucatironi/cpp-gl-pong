@@ -75,11 +75,9 @@ void Game::Update(GLfloat deltaTime)
         }
         // Check loss condition
         if (Ball->Position.x <= 0.0f)
-        {
             Ball->Reset(glm::vec2(this->WindowWidth / 2, this->WindowHeight / 2), INITIAL_BALL_VELOCITY);
-        } else if (Ball->Position.x + Ball->Size.x >= this->WindowWidth) {
+        else if (Ball->Position.x + Ball->Size.x >= this->WindowWidth)
             Ball->Reset(glm::vec2(this->WindowWidth / 2, this->WindowHeight / 2), INITIAL_BALL_VELOCITY);
-        }
     }
 }
 
