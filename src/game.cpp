@@ -6,11 +6,15 @@
 #include "particle_generator.hpp"
 #include "post_processor.hpp"
 
-SpriteRenderer *Renderer;
+using namespace irrklang;
+
+SpriteRenderer    *Renderer;
 ParticleGenerator *Particles;
-PostProcessor *Effects;
-GameObject *Paddle1, *Paddle2;
-BallObject *Ball;
+PostProcessor     *Effects;
+GameObject        *Paddle1, *Paddle2;
+BallObject        *Ball;
+ISoundEngine      *SoundEngine = createIrrKlangDevice();
+
 GLfloat ShakeTime = 0.0f;
 
 Game::Game(GLuint windowWidth, GLuint windowHeight, GLuint framebufferWidth, GLuint framebufferHeight)
