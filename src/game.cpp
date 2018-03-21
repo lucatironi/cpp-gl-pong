@@ -79,9 +79,15 @@ void Game::Update(GLfloat deltaTime)
         }
         // Check loss condition
         if (Ball->Position.x <= 0.0f)
+        {
+            SoundEngine->play2D("../assets/out.wav", GL_FALSE);
             Ball->Reset(glm::vec2(this->WindowWidth / 2, this->WindowHeight / 2), INITIAL_BALL_VELOCITY);
+        }
         else if (Ball->Position.x + Ball->Size.x >= this->WindowWidth)
+        {
+            SoundEngine->play2D("../assets/out.wav", GL_FALSE);
             Ball->Reset(glm::vec2(this->WindowWidth / 2, this->WindowHeight / 2), INITIAL_BALL_VELOCITY);
+        }
     }
 }
 
@@ -140,6 +146,7 @@ void Game::DoCollisions()
     {
         ShakeTime = 0.05f;
         Effects->Shake = true;
+        SoundEngine->play2D("../assets/bleep.wav", GL_FALSE);
 
         GLfloat centerBoard = Paddle1->Position.y + Paddle1->Size.y / 2;
         GLfloat distance = (Ball->Position.y + Ball->Radius) - centerBoard;
@@ -154,6 +161,7 @@ void Game::DoCollisions()
     {
         ShakeTime = 0.05f;
         Effects->Shake = true;
+        SoundEngine->play2D("../assets/bleep.wav", GL_FALSE);
 
         GLfloat centerBoard = Paddle2->Position.y + Paddle2->Size.y / 2;
         GLfloat distance = (Ball->Position.y + Ball->Radius) - centerBoard;
