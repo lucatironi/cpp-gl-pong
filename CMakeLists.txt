@@ -19,7 +19,15 @@ include_directories(src/
                     vendor/glad/include/
                     vendor/glfw/include/
                     vendor/glm/
+                    vendor/irrKlang/include/
                     vendor/stb/)
+
+find_library(irrKlang_location
+              NAMES libirrklang.dylib
+              HINTS "vendor/irrKlang/bin/macosx-gcc/")
+
+add_library(irrKlang STATIC IMPORTED)
+set_target_properties(irrKlang PROPERTIES IMPORTED_LOCATION ${irrKlang_location})
 
 file(GLOB VENDORS_SOURCES vendor/glad/src/glad.c)
 file(GLOB PROJECT_HEADERS src/*.hpp)
@@ -41,7 +49,7 @@ add_definitions(-DGLFW_INCLUDE_NONE
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
                                ${PROJECT_SHADERS} ${PROJECT_CONFIGS}
                                ${VENDORS_SOURCES})
-target_link_libraries(${PROJECT_NAME} glfw
+target_link_libraries(${PROJECT_NAME} glfw irrKlang
                       ${GLFW_LIBRARIES} ${GLAD_LIBRARIES})
 set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
