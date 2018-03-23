@@ -36,7 +36,9 @@ Game::~Game()
 {
     delete Renderer;
     delete Particles;
+    delete Effects;
     delete Text;
+    SoundEngine->drop();
 }
 
 void Game::Init()
