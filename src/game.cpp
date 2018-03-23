@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "game.hpp"
 #include "resource_manager.hpp"
 #include "sprite_renderer.hpp"
@@ -7,6 +9,7 @@
 #include "post_processor.hpp"
 
 using namespace irrklang;
+#include "text_renderer.hpp"
 
 SpriteRenderer    *Renderer;
 ParticleGenerator *Particles;
@@ -14,8 +17,12 @@ PostProcessor     *Effects;
 GameObject        *Paddle1, *Paddle2;
 BallObject        *Ball;
 ISoundEngine      *SoundEngine = createIrrKlangDevice();
+TextRenderer      *Text;
 
 GLfloat ShakeTime = 0.0f;
+int MaxScore = 10;
+int Paddle1Score = 0;
+int Paddle2Score = 0;
 
 Game::Game(GLuint windowWidth, GLuint windowHeight, GLuint framebufferWidth, GLuint framebufferHeight)
     : State(GAME_ACTIVE), Keys(),
@@ -28,6 +35,7 @@ Game::~Game()
 {
     delete Renderer;
     delete Particles;
+    delete Text;
 }
 
 void Game::Init()
@@ -44,6 +52,8 @@ void Game::Init()
     Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
     Particles = new ParticleGenerator(ResourceManager::GetShader("particle"), 500);
     Effects = new PostProcessor(ResourceManager::GetShader("postprocessing"), this->FramebufferWidth, this->FramebufferHeight);
+    Text = new TextRenderer(this->WindowWidth, this->WindowHeight);
+    Text->Load("../assets/Roboto-Bold.ttf", 42);
 
     // Configure game objects
     glm::vec2 paddle1Position = glm::vec2(
@@ -80,11 +90,13 @@ void Game::Update(GLfloat deltaTime)
         // Check loss condition
         if (Ball->Position.x <= 0.0f)
         {
+            Paddle2Score++;
             SoundEngine->play2D("../assets/out.wav", GL_FALSE);
             Ball->Reset(glm::vec2(this->WindowWidth / 2, this->WindowHeight / 2), INITIAL_BALL_VELOCITY);
         }
         else if (Ball->Position.x + Ball->Size.x >= this->WindowWidth)
         {
+            Paddle1Score++;
             SoundEngine->play2D("../assets/out.wav", GL_FALSE);
             Ball->Reset(glm::vec2(this->WindowWidth / 2, this->WindowHeight / 2), INITIAL_BALL_VELOCITY);
         }
@@ -132,6 +144,10 @@ void Game::Render()
             Ball->Draw(*Renderer);
         Effects->EndRender();
         Effects->Render(glfwGetTime());
+
+        std::stringstream ss;
+        ss << Paddle1Score << ":" << Paddle2Score;
+        Text->RenderText(ss.str(), this->WindowWidth / 2 - 30.0f, 5.0f, 1.0f);
     }
 }
 
