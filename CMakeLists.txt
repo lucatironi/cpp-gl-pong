@@ -22,9 +22,15 @@ include_directories(src/
                     vendor/irrKlang/include/
                     vendor/stb/)
 
-find_library(irrKlang_location
-              NAMES libirrklang.dylib
-              HINTS "vendor/irrKlang/bin/macosx-gcc/")
+if(APPLE)
+    find_library(irrKlang_location
+                NAMES libirrklang.dylib
+                HINTS "vendor/irrKlang/bin/macosx-gcc/")
+elseif(WIN32)
+    find_library(irrKlang_location
+                NAMES irrKlang.dll
+                HINTS "vendor/irrKlang/bin/winx64-visualStudio/")
+endif()
 
 add_library(irrKlang STATIC IMPORTED)
 set_target_properties(irrKlang PROPERTIES IMPORTED_LOCATION ${irrKlang_location})
