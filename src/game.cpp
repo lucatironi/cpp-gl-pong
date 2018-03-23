@@ -1,5 +1,8 @@
 #include <sstream>
 
+#include <irrKlang.h>
+using namespace irrklang;
+
 #include "game.hpp"
 #include "resource_manager.hpp"
 #include "sprite_renderer.hpp"
@@ -7,8 +10,6 @@
 #include "ball_object.hpp"
 #include "particle_generator.hpp"
 #include "post_processor.hpp"
-
-using namespace irrklang;
 #include "text_renderer.hpp"
 
 SpriteRenderer    *Renderer;
