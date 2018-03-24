@@ -1,7 +1,7 @@
 #include "particle_generator.hpp"
 
 ParticleGenerator::ParticleGenerator(Shader shader,  GLuint amount)
-    : shader(shader), amount(amount)
+    : amount(amount), shader(shader)
 {
     this->initRenderData();
 }

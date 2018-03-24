@@ -9,8 +9,9 @@
 class GameObject
 {
   public:
-    glm::vec2 Position, Size, Velocity;
+    glm::vec2 Position, Size;
     glm::vec3 Color;
+    glm::vec2 Velocity;
     GLfloat Rotation;
 
     GameObject();
