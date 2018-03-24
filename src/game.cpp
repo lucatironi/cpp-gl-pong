@@ -26,7 +26,7 @@ int Paddle1Score = 0;
 int Paddle2Score = 0;
 
 Game::Game(GLuint windowWidth, GLuint windowHeight, GLuint framebufferWidth, GLuint framebufferHeight)
-    : State(GAME_ACTIVE), Keys(),
+    : State(GAME_MENU), Keys(),
       WindowWidth(windowWidth), WindowHeight(windowHeight),
       FramebufferWidth(framebufferWidth), FramebufferHeight(framebufferHeight)
 {
@@ -73,6 +73,45 @@ void Game::Init()
     Ball = new BallObject(ballPosition, BALL_RADIUS, INITIAL_BALL_VELOCITY);
 }
 
+void Game::ProcessInput(GLfloat deltaTime)
+{
+    if (this->State == GAME_ACTIVE)
+    {
+        GLfloat deltaSpace = PADDLE_VELOCITY * deltaTime;
+        // Move paddle one
+        if (this->Keys[GLFW_KEY_W])
+        {
+            if (Paddle1->Position.y >= 0)
+                Paddle1->Position.y -= deltaSpace;
+        }
+        if (this->Keys[GLFW_KEY_S])
+        {
+            if (Paddle1->Position.y <= this->WindowHeight - Paddle1->Size.y)
+                Paddle1->Position.y += deltaSpace;
+        }
+        // Move paddle two
+        if (this->Keys[GLFW_KEY_UP])
+        {
+            if (Paddle2->Position.y >= 0)
+                Paddle2->Position.y -= deltaSpace;
+        }
+        if (this->Keys[GLFW_KEY_DOWN])
+        {
+            if (Paddle2->Position.y <= this->WindowHeight - Paddle2->Size.y)
+                Paddle2->Position.y += deltaSpace;
+        }
+    }
+    if (this->State == GAME_MENU || this->State == GAME_WIN)
+    {
+        if (this->Keys[GLFW_KEY_ENTER] && !this->KeysProcessed[GLFW_KEY_ENTER])
+        {
+            this->Reset();
+            this->State = GAME_ACTIVE;
+            this->KeysProcessed[GLFW_KEY_ENTER] = GL_TRUE;
+        }
+    }
+}
+
 void Game::Update(GLfloat deltaTime)
 {
     if (this->State == GAME_ACTIVE)
@@ -103,42 +142,15 @@ void Game::Update(GLfloat deltaTime)
             SoundEngine->play2D("../assets/out.wav", GL_FALSE);
             Ball->Reset(glm::vec2(this->WindowWidth / 2, this->WindowHeight / 2), INITIAL_BALL_VELOCITY);
         }
-    }
-}
 
-void Game::ProcessInput(GLfloat deltaTime)
-{
-    if (this->State == GAME_ACTIVE)
-    {
-        GLfloat deltaSpace = PADDLE_VELOCITY * deltaTime;
-        // Move paddle one
-        if (this->Keys[GLFW_KEY_W])
-        {
-            if (Paddle1->Position.y >= 0)
-                Paddle1->Position.y -= deltaSpace;
-        }
-        if (this->Keys[GLFW_KEY_S])
-        {
-            if (Paddle1->Position.y <= this->WindowHeight - Paddle1->Size.y)
-                Paddle1->Position.y += deltaSpace;
-        }
-        // Move paddle two
-        if (this->Keys[GLFW_KEY_UP])
-        {
-            if (Paddle2->Position.y >= 0)
-                Paddle2->Position.y -= deltaSpace;
-        }
-        if (this->Keys[GLFW_KEY_DOWN])
-        {
-            if (Paddle2->Position.y <= this->WindowHeight - Paddle2->Size.y)
-                Paddle2->Position.y += deltaSpace;
-        }
+        if (Paddle1Score >= MaxScore || Paddle2Score >= MaxScore)
+            this->State = GAME_WIN;
     }
 }
 
 void Game::Render()
 {
-    if (this->State == GAME_ACTIVE)
+    if (this->State == GAME_ACTIVE || this->State == GAME_MENU || this->State == GAME_WIN)
     {
         Effects->BeginRender();
             Paddle1->Draw(*Renderer);
@@ -152,6 +164,26 @@ void Game::Render()
         ss << Paddle1Score << ":" << Paddle2Score;
         Text->RenderText(ss.str(), this->WindowWidth / 2 - 30.0f, 5.0f, 1.0f);
     }
+    if (this->State == GAME_MENU || this->State == GAME_WIN)
+        Text->RenderText("Press ENTER to start", 310.0f, this->WindowHeight / 2 - 25.0f, 0.5f);
+    if (this->State == GAME_WIN) {
+        std::string winText;
+        if (Paddle1Score > Paddle2Score)
+            winText = "Player 1 Won!";
+        else
+            winText = "Player 2 Won!";
+
+        Text->RenderText(winText, 310.0f, this->WindowHeight / 2 + 25.0f, 0.75f);
+    }
+}
+
+void Game::Reset()
+{
+    Paddle1Score = 0;
+    Paddle2Score = 0;
+    Paddle1->Position = glm::vec2(10.0f, this->WindowHeight / 2 - PADDLE_SIZE.y / 2);
+    Paddle2->Position = glm::vec2(this->WindowWidth - PADDLE_SIZE.x - 10.0f, this->WindowHeight / 2 - PADDLE_SIZE.y / 2);
+    Ball->Reset(glm::vec2(this->WindowWidth / 2, this->WindowHeight / 2), INITIAL_BALL_VELOCITY);
 }
 
 // Collision detection

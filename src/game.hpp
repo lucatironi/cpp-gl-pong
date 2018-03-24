@@ -23,6 +23,7 @@ class Game
   public:
     GameState State;
     GLboolean Keys[1024];
+    GLboolean KeysProcessed[1024];
     GLuint WindowWidth, WindowHeight, FramebufferWidth, FramebufferHeight;
     
     Game(GLuint windowWidth, GLuint windowHeight, GLuint framebufferWidth, GLuint framebufferHeight);
