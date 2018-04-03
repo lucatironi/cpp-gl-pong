@@ -16,7 +16,7 @@ else()
 endif()
 
 include_directories(src/
-                    vendor/freetype/include
+                    vendor/freetype/include/
                     vendor/glad/include/
                     vendor/glfw/include/
                     vendor/glm/
