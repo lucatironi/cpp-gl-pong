@@ -56,7 +56,7 @@ void Game::Init()
     Particles = new ParticleGenerator(ResourceManager::GetShader("particle"), 500);
     Effects = new PostProcessor(ResourceManager::GetShader("postprocessing"), this->FramebufferWidth, this->FramebufferHeight);
     Text = new TextRenderer(this->WindowWidth, this->WindowHeight);
-    Text->Load("../assets/Roboto-Bold.ttf", 42);
+    Text->Load("../assets/PressStart2P-Regular.ttf", 32);
 
     // Configure game objects
     glm::vec2 paddle1Position = glm::vec2(
@@ -162,10 +162,10 @@ void Game::Render()
 
         std::stringstream ss;
         ss << Paddle1Score << ":" << Paddle2Score;
-        Text->RenderText(ss.str(), this->WindowWidth / 2 - 30.0f, 5.0f, 1.0f);
+        Text->RenderText(ss.str(), this->WindowWidth / 2 - 45.0f, 5.0f, 1.0f);
     }
     if (this->State == GAME_MENU || this->State == GAME_WIN)
-        Text->RenderText("Press ENTER to start", 310.0f, this->WindowHeight / 2 - 25.0f, 0.5f);
+        Text->RenderText("Press ENTER to start", 260.0f, this->WindowHeight / 2 - 25.0f, 0.5f);
     if (this->State == GAME_WIN) {
         std::string winText;
         if (Paddle1Score > Paddle2Score)
@@ -173,7 +173,7 @@ void Game::Render()
         else
             winText = "Player 2 Won!";
 
-        Text->RenderText(winText, 310.0f, this->WindowHeight / 2 + 25.0f, 0.75f);
+        Text->RenderText(winText, 270.0f, this->WindowHeight / 2 + 25.0f, 0.75f);
     }
 }
 
